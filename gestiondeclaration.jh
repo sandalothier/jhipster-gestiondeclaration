@@ -1,0 +1,110 @@
+/**
+ * EnteteDeclaration entity.
+ * @author Sanda.
+ *   Cette table represente le microservice qui 
+ *   permet de mettre l'entete sur chaque 
+ *   déclaration
+ *   RELATION
+ *     ManToOne avec periode
+ */
+entity EnteteDeclaration {
+    dateDebut Date required
+    dateFin Date required
+    dateDeclaration Instant
+    nomDeclarant String
+}
+/**
+ * ListeDeclaration entity.
+ * @author Sanda.
+ *     Cette table liste les déclarations 
+ *     existente ainsi que la recurrence des 
+ *     déclarations à laquelle elles sont soumises
+ *     RELATION
+ *         ManyToMany avec ListeImposition
+ */
+entity ListeDeclaration {
+    code String
+    nomDeclaration String
+    typeDeclaration TypeDeclaration
+    recurence Boolean
+}
+/**
+ * Frequence entity.
+ * @author Sanda.
+ *     c'est la duree o la date après laquelle on devrait 
+ *     faire une nouvelle déclaration ou payer
+ *     une nouvelle imposition et le fait 
+ *     déclencheur c'est de voir ceci est motivé
+ *     par un evenement.
+ *     Si le dureeDate est vrai ou pas alors
+ *     il faudrait afficher soit 
+ *     - duree o soit
+ *     - dateEvent
+ */
+entity Frequence {
+    dureeDate Boolean
+    duree Integer
+    dateEvent Date
+    faitDeclencheur Boolean
+}
+enum TypeDeclaration {
+    IMMATRICULATION, IMPOSITION, INFORMATIONNEL
+}
+/**
+ * ExerciceComptable entity.
+ * @author Sanda
+ * C'est l'unité d'écriture comptable
+ *     relation
+ *     OneToOne avec PlanComptable pour le numero de compte
+ *     ManyToOne avec Ecriture
+ */
+entity ExerciceComptable {
+    debutPeriode Date
+    finPeriode Date
+}
+
+/**
+ * One to many relationship.
+ */
+relationship OneToMany {
+    Contribuable to ExerciceComptable
+}
+/**
+ * One to many relationship.
+ */
+relationship OneToMany {
+    ExerciceComptable to EnteteDeclaration
+}
+/**
+ * One to many relationship.
+ */
+relationship OneToMany {
+    ListeDeclaration to IntituleImposition
+}
+/**
+ * One to many relationship.
+ */
+relationship OneToMany {
+    ListeDeclaration to EnteteDeclaration
+}
+/**
+ * One to many relationship.
+ */
+relationship OneToMany {
+    EnteteDeclaration to DocumentJustificatif
+}
+/**
+ * One to many relationship.
+ */
+relationship OneToMany {
+    ListeDeclaration to Frequence
+}
+// Set pagination options
+paginate EnteteDeclaration, ListeDeclaration with infinite-scroll
+paginate Frequence with pagination
+// Use Data Transfert Objects (DTO)
+dto EnteteDeclaration, ListeDeclaration with mapstruct
+// Set service options to all except few
+service all with serviceImpl 
+// Set an angular suffix
+// angularSuffix * with mySuffix
